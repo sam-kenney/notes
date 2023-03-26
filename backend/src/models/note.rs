@@ -9,12 +9,12 @@ use uuid::Uuid;
 /// * `title` - A summary for the note.
 /// * `body` - The note's main content.
 /// * `timestamp` - When the note was created or last updated.
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Note {
-    pub id: String,
+    pub id: Option<String>,
     pub title: String,
     pub body: String,
-    pub timestamp: i64,
+    pub timestamp: Option<i64>,
 }
 
 impl Note {
@@ -39,10 +39,10 @@ impl Note {
         };
 
         Self {
-            id,
+            id: Some(id),
             title: title.to_string(),
             body: body.to_string(),
-            timestamp,
+            timestamp: Some(timestamp),
         }
     }
 }
