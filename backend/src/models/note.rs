@@ -27,22 +27,12 @@ impl Note {
     /// * `id` - A unique identifier. If not provided, a new one will be generated.
     /// * `timestamp` - When the note was created or last updated.
     ///                 If not provided, the current time will be used.
-    pub fn new(title: &str, body: &str, id: Option<&str>, timestamp: Option<i64>) -> Self {
-        let timestamp = match timestamp {
-            Some(timestamp) => timestamp,
-            None => chrono::Utc::now().timestamp(),
-        };
-
-        let id = match id {
-            Some(id) => id.to_string(),
-            None => Uuid::new_v4().to_string(),
-        };
-
+    pub fn new(title: String, body: String, id: Option<String>, timestamp: Option<i64>) -> Self {
         Self {
-            id: Some(id),
-            title: title.to_string(),
-            body: body.to_string(),
-            timestamp: Some(timestamp),
+            id: Some(id.unwrap_or(Uuid::new_v4().to_string())),
+            title: title,
+            body: body,
+            timestamp: Some(timestamp.unwrap_or(chrono::Utc::now().timestamp())),
         }
     }
 }

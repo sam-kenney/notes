@@ -7,14 +7,9 @@ use crate::models::{Note, SharedState};
 #[axum::debug_handler]
 pub async fn create(
     State(state): State<SharedState>,
-    Json(mut payload): Json<Note>,
+    Json(payload): Json<Note>,
 ) -> Response<String> {
-    if payload.id.is_none() {
-        payload = Note::new(payload.title.as_str(), payload.body.as_str(), None, None);
-    };
-    if payload.timestamp.is_none() {
-        payload.timestamp = Some(chrono::Utc::now().timestamp());
-    };
+    let payload = Note::new(payload.title, payload.body, payload.id, payload.timestamp);
 
     let body = json!(payload).to_string();
 

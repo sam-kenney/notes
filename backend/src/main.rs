@@ -5,7 +5,7 @@ use axum::{
     routing::{delete, get, post, put},
     Router, Server,
 };
-use std::sync::Arc;
+use std::{net::SocketAddr, sync::Arc};
 
 /// Shared application state.
 ///
@@ -24,8 +24,7 @@ async fn main() {
         db: firebase::Client::new().await,
     });
 
-    // TODO: Add routes & methods for POST, PATCH, DELETE
-    let router = Router::new()
+    let app = Router::new()
         .route("/api/notes/", get(services::list))
         .route("/api/notes/", post(services::create))
         .route("/api/notes/:id/", get(services::get))
@@ -34,14 +33,12 @@ async fn main() {
         .with_state(app_state.clone())
         .fallback(services::not_found);
 
-    let server = Server::bind(&"0.0.0.0:7032".parse().unwrap()).serve(router.into_make_service());
+    let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
 
-    let addr = server.local_addr();
+    println!("Listening on {}", addr);
 
-    println!("Listening on {addr}");
-
-    match server.await {
-        Ok(_) => println!("Server stopped gracefully"),
-        Err(err) => eprintln!("Server stopped with error: {err}"),
-    }
+    Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
 }
