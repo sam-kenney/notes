@@ -1,0 +1,6 @@
+**/.git/
+*.env
+.editorconfig
+.gcloudignore
+.gitignore
+README.md

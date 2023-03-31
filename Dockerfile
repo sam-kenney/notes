@@ -1,7 +1,7 @@
-FROM rust:1.61
+FROM rust:latest
 
 COPY . .
 
 RUN cargo build --release
 
-CMD ["./target/release/backend"]
+ENTRYPOINT ["./target/release/backend"]
