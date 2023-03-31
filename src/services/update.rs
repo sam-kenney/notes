@@ -12,15 +12,8 @@ use crate::models::{Note, SharedState};
 pub async fn update(
     State(state): State<SharedState>,
     Path(id): Path<String>,
-    Json(mut payload): Json<Note>,
+    Json(payload): Json<Note>,
 ) -> Response<String> {
-    if payload.id.is_none() {
-        payload.id = Some(id.clone());
-    };
-    if payload.timestamp.is_none() {
-        payload.timestamp = Some(chrono::Utc::now().timestamp());
-    };
-
     let body = json!(payload).to_string();
 
     let response = state

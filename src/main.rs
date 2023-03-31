@@ -1,8 +1,10 @@
 mod firebase;
+mod frontend;
 mod models;
 mod services;
 mod shutdown;
 use axum::{
+    response::Response,
     routing::{delete, get, post, put},
     Router, Server,
 };
@@ -15,7 +17,7 @@ use tracing_subscriber::{filter, prelude::*};
 ///
 /// # Parameters
 ///
-/// * `firebase` - A Firebase client to interact with the database.
+/// * `db` - A Firebase client to interact with the database.
 pub struct AppState {
     db: firebase::Client,
 }
@@ -39,6 +41,9 @@ async fn main() {
     });
 
     let app = Router::new()
+        .route("/", get(frontend::index::html_get))
+        .route("/notes/:id/", get(frontend::view_note::html_get))
+        .route("/index.css", get(frontend::css_get))
         .route("/api/notes/", get(services::list))
         .route("/api/notes/", post(services::create))
         .route("/api/notes/:id/", get(services::get))
@@ -60,4 +65,12 @@ async fn main() {
         Ok(_) => println!("Server stopped gracefully"),
         Err(err) => eprintln!("Server error: {}", err),
     }
+}
+
+fn build_response(markup: String, content_type: &str) -> Response<String> {
+    Response::builder()
+        .status(200)
+        .header("Content-Type", format!("{};charset=utf-8", content_type))
+        .body(markup)
+        .unwrap()
 }

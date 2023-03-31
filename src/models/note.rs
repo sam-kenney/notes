@@ -11,28 +11,18 @@ use uuid::Uuid;
 /// * `timestamp` - When the note was created or last updated.
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Note {
-    pub id: Option<String>,
+    #[serde(default = "generate_uuid")]
+    pub id: String,
     pub title: String,
     pub body: String,
-    pub timestamp: Option<i64>,
+    #[serde(default = "generate_timestamp")]
+    pub timestamp: i64,
 }
 
-impl Note {
-    /// Create a new note.
-    ///
-    /// # Arguments
-    ///
-    /// * `title` - A summary for the note.
-    /// * `body` - The note's main content.
-    /// * `id` - A unique identifier. If not provided, a new one will be generated.
-    /// * `timestamp` - When the note was created or last updated.
-    ///                 If not provided, the current time will be used.
-    pub fn new(title: String, body: String, id: Option<String>, timestamp: Option<i64>) -> Self {
-        Self {
-            id: Some(id.unwrap_or(Uuid::new_v4().to_string())),
-            title: title,
-            body: body,
-            timestamp: Some(timestamp.unwrap_or(chrono::Utc::now().timestamp())),
-        }
-    }
+fn generate_uuid() -> String {
+    Uuid::new_v4().to_string()
+}
+
+fn generate_timestamp() -> i64 {
+    chrono::Utc::now().timestamp()
 }

@@ -15,7 +15,7 @@ pub async fn list(State(state): State<SharedState>) -> Response<String> {
         .into_iter()
         .map(|(id, note)| {
             let mut note = note;
-            note.id = Some(id);
+            note.id = id;
             note
         })
         .collect::<Vec<Note>>();

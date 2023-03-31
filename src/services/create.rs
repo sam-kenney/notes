@@ -9,14 +9,12 @@ pub async fn create(
     State(state): State<SharedState>,
     Json(payload): Json<Note>,
 ) -> Response<String> {
-    let payload = Note::new(payload.title, payload.body, payload.id, payload.timestamp);
-
     let body = json!(payload).to_string();
 
     let response = state
         .db
         .patch(
-            format!("notes/{}", payload.id.clone().unwrap()).as_str(),
+            format!("notes/{}", payload.id.clone()).as_str(),
             body.as_str(),
         )
         .await
